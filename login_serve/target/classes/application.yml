@@ -1,0 +1,14 @@
+server:
+  port: 8092
+
+spring:
+  datasource:
+    password: HSTsnjdy1
+    username: root
+    url: jdbc:mysql://127.0.0.1:3306/test
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
