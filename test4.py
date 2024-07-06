@@ -1,0 +1,137 @@
+import torch
+import torch.nn as nn
+from torchcrf import CRF
+from utils import *
+from model import *
+import numpy as np
+from config import *
+import matplotlib.pyplot as plt
+from config import *
+from transformers import BertModel, BertConfig
+
+
+class BILSTM_CRF_BERT(nn.Module):
+    def __init__(self, bert_config):
+        super().__init__()
+        self.embed = nn.Embedding(VOCAB_SIZE, EMBEDDING_DIM)
+        self.bert = BertModel(config=bert_config)
+        self.lstm = nn.LSTM(EMBEDDING_DIM, HIDDEN_SIZE, bidirectional=True, batch_first=True)
+        self.fc1 = nn.Linear(HIDDEN_SIZE * 2, TARGET_SIZE)
+        self.crf = CRF(TARGET_SIZE, batch_first=True)
+
+    def forward(self, x, mask):
+        # embedding = self.embed(x)
+        embedding = self.bert(x)[0]
+        lstm_out, _ = self.lstm(embedding)
+        tag_space = self.fc1(lstm_out)
+        return self.crf.decode(tag_space, mask)
+
+    def loss_fn(self, input, target, mask):
+        # embedding = self.embed(input)
+        embedding = self.bert(input)[0]
+        lstm_out, _ = self.lstm(embedding)
+        y_pred = self.fc1(lstm_out)
+        return -self.crf.forward(y_pred, target, mask, reduction='mean')
+
+
+def train():
+    dataset = Dataset()
+    loader = data.DataLoader(
+        dataset,
+        batch_size=20,
+        shuffle=True,
+        collate_fn=collate_fn,
+        num_workers=0
+    )
+    num_epochs = 100
+
+    loss_list = []
+    epoch_list = []
+    acc_list = []
+    step = 0
+
+    # 训练模型
+    bert_config = BertConfig.from_pretrained(r'D:\chinese_L-12_H-768_A-12\bert_config.json')
+    bert_config.num_labels = 6
+    model = BILSTM_CRF_BERT(bert_config).cuda()
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+
+    for epoch in range(num_epochs):
+
+        y_true_list = []
+        y_pred_list = []
+        for b, (x, tags, mask) in enumerate(loader):
+            # 前向传播
+            loss = model.loss_fn(x.cuda(), tags.cuda(), mask.cuda())
+            # 反向传播
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+        loss_list.append(loss.item())
+        epoch_list.append(step)
+        step += 1
+        print(f'epoch: {epoch + 1}/{num_epochs}, loss: {loss.item():.4f}')
+    # torch.save(model, MODEL_DIR + f'model_5_bilstm-crf_bert.pth')
+
+    y1 = loss_list
+    # y2 = acc_list
+    x = epoch_list
+    plt.xlabel('epoch')
+
+    plt.plot(x, y1, label='loss')
+    # plt.plot(x, y2, label='acc')
+    plt.legend()
+    plt.title('BERT-BiLSTM-CRF')
+    plt.show()
+
+
+def test():
+    # 测试模型
+
+    dataset = Dataset('test')
+    loader = data.DataLoader(dataset, batch_size=100, collate_fn=collate_fn)
+
+    test_epoch_list = []
+    test_acc_list = []
+    step = 0
+    with torch.no_grad():
+        model = torch.load(MODEL_DIR + 'model_5_bilstm-crf_bert.pth')
+        y_true_list = []
+        y_pred_list = []
+
+        for b, (input, target, mask) in enumerate(loader):
+            input = input.cuda()
+            mask = mask.cuda()
+            y_pred = model(input, mask)
+            loss = model.loss_fn(input, target, mask)
+
+            print('>> batch:', b + 1, 'loss:', loss.item())
+
+            # 拼接返回值
+            for lst in y_pred:
+                y_pred_list += lst
+            for y, m in zip(target, mask):
+                y_true_list += y[m == True].tolist()
+
+        # 整体准确率
+        y_true_tensor = torch.tensor(y_true_list)
+        y_pred_tensor = torch.tensor(y_pred_list)
+        accuracy = (y_true_tensor == y_pred_tensor).sum() / len(y_true_tensor)
+        print(f'>> total: {len(y_true_tensor)}, Test accuracy: {accuracy.item():.4f}')
+    #     test_epoch_list.append(step)
+    #     test_acc_list.append(accuracy)
+    #     step += 1
+    #
+    # x = test_epoch_list
+    # y = test_acc_list
+    # plt.plot(x, y, label='acc')
+    # plt.xlabel('epoch')
+    # plt.title('LSTM-CRF_test')
+    # plt.legend()
+    # plt.show()
+
+
+if __name__ == '__main__':
+    train()
+    test()
