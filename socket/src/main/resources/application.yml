@@ -1,0 +1,33 @@
+server:
+  port: 8094
+  servlet:
+    encoding:
+      force: true
+      charset: UTF-8
+
+spring:
+  datasource:
+    password: HSTsnjdy1
+    username: root
+    url: jdbc:mysql://127.0.0.1:3306/test
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    context-path: /socket
+  application:
+    name: websocket-demo
+  freemarker:
+    request-context-attribute: request
+    prefix: /templates/
+    suffix: .html
+    content-type: text/html
+    enabled: true
+    cache: false
+    charset: UTF-8
+    allow-request-override: false
+    expose-request-attributes: true
+    expose-session-attributes: true
+    expose-spring-macro-helpers: true
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
