@@ -1,0 +1,19 @@
+server:
+  port: 8089
+
+spring:
+  datasource:
+    password: HSTsnjdy1
+    username: root
+    url: jdbc:mysql://127.0.0.1:3306/test
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      enabled: true # 开启文件上传
+      file-size-threshold: 2MB # 文件写入磁盘的阈值
+      max-file-size: 100MB
+      max-request-size: 215MB # 最大请求值大小
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
