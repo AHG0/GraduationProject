@@ -1,0 +1,62 @@
+{
+  "groups": [
+    {
+      "name": "alipay",
+      "type": "com.hst.pay_serve.config.AliPayConfig",
+      "sourceType": "com.hst.pay_serve.config.AliPayConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "alipay.a-li-public-key",
+      "type": "java.lang.String",
+      "sourceType": "com.hst.pay_serve.config.AliPayConfig"
+    },
+    {
+      "name": "alipay.app-id",
+      "type": "java.lang.String",
+      "sourceType": "com.hst.pay_serve.config.AliPayConfig"
+    },
+    {
+      "name": "alipay.charset",
+      "type": "java.lang.String",
+      "sourceType": "com.hst.pay_serve.config.AliPayConfig"
+    },
+    {
+      "name": "alipay.gateway-url",
+      "type": "java.lang.String",
+      "sourceType": "com.hst.pay_serve.config.AliPayConfig"
+    },
+    {
+      "name": "alipay.log-path",
+      "type": "java.lang.String",
+      "sourceType": "com.hst.pay_serve.config.AliPayConfig"
+    },
+    {
+      "name": "alipay.notify-url",
+      "type": "java.lang.String",
+      "sourceType": "com.hst.pay_serve.config.AliPayConfig"
+    },
+    {
+      "name": "alipay.private-key",
+      "type": "java.lang.String",
+      "sourceType": "com.hst.pay_serve.config.AliPayConfig"
+    },
+    {
+      "name": "alipay.public-key",
+      "type": "java.lang.String",
+      "sourceType": "com.hst.pay_serve.config.AliPayConfig"
+    },
+    {
+      "name": "alipay.return-url",
+      "type": "java.lang.String",
+      "sourceType": "com.hst.pay_serve.config.AliPayConfig"
+    },
+    {
+      "name": "alipay.sign-type",
+      "type": "java.lang.String",
+      "sourceType": "com.hst.pay_serve.config.AliPayConfig"
+    }
+  ],
+  "hints": []
+}

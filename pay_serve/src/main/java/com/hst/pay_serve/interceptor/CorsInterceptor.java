@@ -1,0 +1,39 @@
+package com.hst.pay_serve.interceptor;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+public class CorsInterceptor implements HandlerInterceptor {
+
+    @Override
+    public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response, Object handler) {
+        //表示接受任意域名的请求,也可以指定域名
+        response.setHeader("Access-Control-Allow-Origin", request.getHeader("origin"));
+        //该字段可选，是个布尔值，表示是否可以携带cookie
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "*");
+
+        // 预检处理，方行所有非简单请求方法
+        if (HttpMethod.OPTIONS.toString().equals(request.getMethod())) {
+            return true;
+        }
+        return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response,
+                           Object handler, ModelAndView modelAndView) {
+
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+                                Object handler, Exception ex) {
+
+    }
+}
